@@ -1,0 +1,4 @@
+Endpoint,CPU (%),Memória (%),Swap (%),Tempo de Resposta (s)
+http://localhost:8001/users,74.9,25.037878787878785,0.0,0.029006242752075195
+http://localhost:8002/products,0.0,0.030293850348379277,0.0,0.01737380027770996
+http://localhost:8003/orders,0.0,0.0,0.0,0.014074087142944336
