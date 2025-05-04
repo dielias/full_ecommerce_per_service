@@ -62,3 +62,10 @@ def update_product(product_id: int, data: ProductUpdate, db: Session = Depends(g
     db.commit()
     db.refresh(product)
     return product
+
+@app.get("/products/{product_id}")
+def get_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.get(Product, product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+    return product
