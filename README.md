@@ -1,6 +1,6 @@
  Full Ecommerce API - Microservices Architecture
 
-Este projeto é uma aplicação de ecommerce implementada com **FastAPI**, estruturada com **arquitetura de microserviços** e utilizando o padrão **Per Service Database** e **API Composition** para integração.
+Este projeto é uma aplicação de ecommerce implementada com **FastAPI**, estruturada com **arquitetura de microserviços** e utilizando o padrão **Per Service Database**.
 
 ## 🧱 Estrutura do Projeto
 
