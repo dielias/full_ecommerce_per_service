@@ -39,7 +39,6 @@ Isso inicializa todos os serviços e bancos de dados. A aplicação estará disp
 | Users        | 8001  | `http://localhost:8001` |
 | Products     | 8002  | `http://localhost:8002` |
 | Orders       | 8003  | `http://localhost:8003` |
-| API Composer | 8000  | `http://localhost:8000` |
 
 ## 🔌 Endpoints
 
