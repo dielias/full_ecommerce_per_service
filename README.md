@@ -8,7 +8,6 @@ Este projeto é uma aplicação de ecommerce implementada com **FastAPI**, estru
 .
 ├── docker-compose.yml
 ├── services
-│   ├── api-composer        # Serviço que compõe dados dos outros microserviços
 │   ├── users               # Microserviço de usuários
 │   ├── products            # Microserviço de produtos
 │   ├── orders              # Microserviço de pedidos
