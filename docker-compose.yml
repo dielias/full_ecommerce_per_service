@@ -113,8 +113,19 @@ services:
       DATABASE_URL: "postgresql+psycopg2://ecommerce_orders:my_password_orders@ecommerce-db-orders:5432/ecommerce_orders"
     networks:
       - ecommerce-net
+  locust:
+    build:
+      context: ./stress_tests
+    depends_on:
+      - users
+      - products
+      - orders
+    ports:
+      - "8089:8089"  # Interface web
+    networks:
+      - ecommerce-net
 
 networks:
   ecommerce-net:
     driver: bridge
-
+    
