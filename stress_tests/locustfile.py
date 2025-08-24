@@ -1,5 +1,6 @@
 from locust import HttpUser, task, between
 import random
+import uuid
 
 class EcommerceUser(HttpUser):
     wait_time = between(2, 5)
@@ -11,7 +12,7 @@ class EcommerceUser(HttpUser):
     def on_start(self):
         # Criar usuário e salvar ID
         name = f"User{random.randint(1, 100000)}"
-        email = f"{name.lower()}.{random.randint(1, 999999)}@test.com"
+        email = f"user_{uuid.uuid4()}@test.com"  # Email com garantina de unicidade
         response = self.client.post("http://users:8001/users", json={"name": name, "email": email})
         if response.status_code in (200, 201):
             self.user_id = response.json().get("id")
@@ -45,7 +46,7 @@ class EcommerceUser(HttpUser):
     @task(1)
     def create_user(self):
         name = f"User{random.randint(1, 100000)}"
-        email = f"{name.lower()}@test.com"
+        email = f"user_{uuid.uuid4()}@test.com"  # Garante unicidade
         self.client.post("http://users:8001/users", json={"name": name, "email": email})
 
     @task(1)

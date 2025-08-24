@@ -99,9 +99,9 @@ services:
       context: .
       dockerfile: services/db-init/Dockerfile
     depends_on:
-      - db-users
-      - db-products
-      - db-orders
+      - toxiproxy-users
+      - toxiproxy-products
+      - toxiproxy-orders
     networks:
       - ecommerce-net
 
