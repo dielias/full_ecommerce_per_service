@@ -12,7 +12,7 @@ class EcommerceUser(HttpUser):
     def on_start(self):
         # Criar usuário e salvar ID
         name = f"User{random.randint(1, 100000)}"
-        email = f"user_{uuid.uuid4()}@test.com"  # Email com garantina de unicidade
+        email = f"user_{uuid.uuid4()}@test.com"  # Garante unicidade
         response = self.client.post("http://users:8001/users", json={"name": name, "email": email})
         if response.status_code in (200, 201):
             self.user_id = response.json().get("id")
@@ -27,9 +27,16 @@ class EcommerceUser(HttpUser):
     @task(4)
     def create_order(self):
         if self.user_id and self.product_id:
-            response = self.client.post("http://orders:8003/orders", json={"user_id": self.user_id, "product_id": self.product_id})
-            if response.status_code in (200, 201):
-                self.order_id = response.json().get("id")
+            try:
+                response = self.client.post(
+                    "http://orders:8003/orders",
+                    json={"user_id": self.user_id, "product_id": self.product_id},
+                    timeout=10
+                )
+                if response.status_code in (200, 201):
+                    self.order_id = response.json().get("id")
+            except Exception as e:
+                print(f"Falha ao criar pedido: {e}")
 
     @task(2)
     def list_orders(self):
