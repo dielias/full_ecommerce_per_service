@@ -19,6 +19,18 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    
+  # Proxy para o banco de usuários
+  toxiproxy-users:
+    image: ghcr.io/shopify/toxiproxy
+    container_name: toxiproxy-users
+    depends_on:
+      - db-users
+    networks:
+      - ecommerce-net
+    ports:
+      - "15432:5432" # opcional para acesso externo
+      - "8475:8474"  # API do toxiproxy
 
   # Banco de dados para os produtos
   db-products:
@@ -38,6 +50,18 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  
+  # Proxy para o banco de produtos
+  toxiproxy-products:
+    image: ghcr.io/shopify/toxiproxy
+    container_name: toxiproxy-products
+    depends_on:
+      - db-products
+    networks:
+      - ecommerce-net
+    ports:
+      - "25432:5432"
+      - "8476:8474"
 
   # Banco de dados para os pedidos
   db-orders:
@@ -56,6 +80,18 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  
+  # Proxy para o banco de pedidos
+  toxiproxy-orders:
+    image: ghcr.io/shopify/toxiproxy
+    container_name: toxiproxy-orders
+    depends_on:
+      - db-orders
+    networks:
+      - ecommerce-net
+    ports:
+      - "35432:5432"
+      - "8477:8474"
 
   # Inicialização dos bancos (criação de tabelas e seed)
   db-init:
@@ -80,7 +116,8 @@ services:
     ports:
       - "8001:8001"
     environment:
-      DATABASE_URL: "postgresql+psycopg2://ecommerce_users:my_password_users@ecommerce-db-users:5432/ecommerce_users"
+      #DATABASE_URL: "postgresql+psycopg2://ecommerce_users:my_password_users@ecommerce-db-users:5432/ecommerce_users"
+      DATABASE_URL: "postgresql+psycopg2://ecommerce_users:my_password_users@toxiproxy-users:5432/ecommerce_users"
     networks:
       - ecommerce-net
 
@@ -95,7 +132,8 @@ services:
     ports:
       - "8002:8002"
     environment:
-      DATABASE_URL: "postgresql+psycopg2://ecommerce_products:my_password_products@ecommerce-db-products:5432/ecommerce_products"
+      #DATABASE_URL: "postgresql+psycopg2://ecommerce_products:my_password_products@ecommerce-db-products:5432/ecommerce_products"
+      DATABASE_URL: "postgresql+psycopg2://ecommerce_products:my_password_products@toxiproxy-products:5432/ecommerce_products"
     networks:
       - ecommerce-net
 
@@ -110,7 +148,8 @@ services:
     ports:
       - "8003:8003"
     environment:
-      DATABASE_URL: "postgresql+psycopg2://ecommerce_orders:my_password_orders@ecommerce-db-orders:5432/ecommerce_orders"
+      #DATABASE_URL: "postgresql+psycopg2://ecommerce_orders:my_password_orders@ecommerce-db-orders:5432/ecommerce_orders"
+      DATABASE_URL: "postgresql+psycopg2://ecommerce_orders:my_password_orders@toxiproxy-orders:5432/ecommerce_orders"
     networks:
       - ecommerce-net
   locust:

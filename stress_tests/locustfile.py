@@ -2,7 +2,7 @@ from locust import HttpUser, task, between
 import random
 
 class EcommerceUser(HttpUser):
-    wait_time = between(1, 3)
+    wait_time = between(2, 5)
 
     user_id = None
     product_id = None
@@ -11,7 +11,7 @@ class EcommerceUser(HttpUser):
     def on_start(self):
         # Criar usuário e salvar ID
         name = f"User{random.randint(1, 100000)}"
-        email = f"{name.lower()}@test.com"
+        email = f"{name.lower()}.{random.randint(1, 999999)}@test.com"
         response = self.client.post("http://users:8001/users", json={"name": name, "email": email})
         if response.status_code in (200, 201):
             self.user_id = response.json().get("id")
@@ -53,4 +53,3 @@ class EcommerceUser(HttpUser):
         name = f"Product{random.randint(1, 100000)}"
         price = round(random.uniform(10.0, 100.0), 2)
         self.client.post("http://products:8002/products", json={"name": name, "price": price})
-        
