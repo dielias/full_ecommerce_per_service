@@ -3,7 +3,7 @@ import random
 import uuid
 
 class EcommerceUser(HttpUser):
-    wait_time = between(2, 5)
+    wait_time = between(1,2)
 
     user_id = None
     product_id = None
