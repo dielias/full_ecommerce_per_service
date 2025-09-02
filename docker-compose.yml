@@ -9,9 +9,6 @@ services:
       POSTGRES_USER: ecommerce_users
       POSTGRES_PASSWORD: my_password_users
       POSTGRES_DB: ecommerce_users
-    # Porta opcional — expor apenas se necessário
-    # ports:
-    #   - "5431:5432"
     networks:
       - ecommerce-net
     healthcheck:
@@ -29,9 +26,9 @@ services:
     networks:
       - ecommerce-net
     ports:
-      - "15432:5432" # opcional para acesso externo
-      - "8475:8474"  # API do toxiproxy
-
+      - "15432:5432" # Porta para o tráfego do serviço de usuários
+      - "8475:8474" # Porta para a API de administração
+ 
   # Banco de dados para os produtos
   db-products:
     image: postgres:14
@@ -40,9 +37,6 @@ services:
       POSTGRES_USER: ecommerce_products
       POSTGRES_PASSWORD: my_password_products
       POSTGRES_DB: ecommerce_products
-    # Alterado para evitar conflito com PostgreSQL local
-    # ports:
-    #   - "5434:5432"
     networks:
       - ecommerce-net
     healthcheck:
@@ -71,8 +65,6 @@ services:
       POSTGRES_USER: ecommerce_orders
       POSTGRES_PASSWORD: my_password_orders
       POSTGRES_DB: ecommerce_orders
-    # ports:
-    #   - "5433:5432"
     networks:
       - ecommerce-net
     healthcheck:
@@ -99,9 +91,12 @@ services:
       context: .
       dockerfile: services/db-init/Dockerfile
     depends_on:
-      - db-users
-      - db-products
-      - db-orders
+      db-users:
+        condition: service_healthy
+      db-products:
+        condition: service_healthy
+      db-orders:
+        condition: service_healthy
     networks:
       - ecommerce-net
 
@@ -113,10 +108,11 @@ services:
     depends_on:
       db-init:
         condition: service_completed_successfully
+      toxiproxy-users:
+        condition: service_started
     ports:
       - "8001:8001"
     environment:
-      #DATABASE_URL: "postgresql+psycopg2://ecommerce_users:my_password_users@ecommerce-db-users:5432/ecommerce_users"
       DATABASE_URL: "postgresql+psycopg2://ecommerce_users:my_password_users@toxiproxy-users:5432/ecommerce_users"
     networks:
       - ecommerce-net
@@ -129,10 +125,11 @@ services:
     depends_on:
       db-init:
         condition: service_completed_successfully
+      toxiproxy-products:
+        condition: service_started
     ports:
       - "8002:8002"
     environment:
-      #DATABASE_URL: "postgresql+psycopg2://ecommerce_products:my_password_products@ecommerce-db-products:5432/ecommerce_products"
       DATABASE_URL: "postgresql+psycopg2://ecommerce_products:my_password_products@toxiproxy-products:5432/ecommerce_products"
     networks:
       - ecommerce-net
@@ -145,13 +142,15 @@ services:
     depends_on:
       db-init:
         condition: service_completed_successfully
+      toxiproxy-orders:
+        condition: service_started
     ports:
       - "8003:8003"
     environment:
-      #DATABASE_URL: "postgresql+psycopg2://ecommerce_orders:my_password_orders@ecommerce-db-orders:5432/ecommerce_orders"
       DATABASE_URL: "postgresql+psycopg2://ecommerce_orders:my_password_orders@toxiproxy-orders:5432/ecommerce_orders"
     networks:
       - ecommerce-net
+      
   locust:
     build:
       context: ./stress_tests
@@ -160,11 +159,10 @@ services:
       - products
       - orders
     ports:
-      - "8089:8089"  # Interface web
+      - "8089:8089"
     networks:
       - ecommerce-net
 
 networks:
   ecommerce-net:
     driver: bridge
-    

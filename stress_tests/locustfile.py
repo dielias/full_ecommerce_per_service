@@ -11,9 +11,9 @@ class EcommerceUser(HttpUser):
     order_id = None
 
     # URLs dos proxies do ToxiProxy
-    users_url = "http://localhost:8475"
-    products_url = "http://localhost:8476"
-    orders_url = "http://localhost:8477"
+    users_url = "http://users:8001"
+    products_url = "http://products:8002"
+    orders_url = "http://orders:8003"
 
     def on_start(self):
         try:
