@@ -10,14 +10,14 @@ class EcommerceUser(HttpUser):
     product_id = None
     order_id = None
 
-    # URLs dos proxies do ToxiProxy
+    # URLs dos endpoints
     users_url = "http://users:8001"
     products_url = "http://products:8002"
     orders_url = "http://orders:8003"
 
     def on_start(self):
         try:
-            # Criar usuário via proxy do ToxiProxy
+            # Criar usuário 
             name = f"User{random.randint(1, 100000)}"
             email = f"user_{uuid.uuid4()}@test.com"
             response = self.client.post(f"{self.users_url}/users", json={"name": name, "email": email})
@@ -26,7 +26,7 @@ class EcommerceUser(HttpUser):
             else:
                 print(f"Failed to create user: Status {response.status_code}")
 
-            # Criar produto via proxy do ToxiProxy
+            # Criar produto 
             name = f"Product{random.randint(1, 100000)}"
             price = round(random.uniform(10.0, 100.0), 2)
             quantity = random.randint(1, 100)
@@ -42,6 +42,7 @@ class EcommerceUser(HttpUser):
                 print(f"Exception during create_order: {e}")
 
     @task(4)
+    #Cria pedido
     def create_order(self):
         if self.user_id and self.product_id:
             try:
@@ -57,6 +58,7 @@ class EcommerceUser(HttpUser):
                 print(f"Exception during create_order: {e}")
 
     @task(2)
+    #Lista pedidos
     def list_orders(self):
         try:
             self.client.get(f"{self.orders_url}/orders")
@@ -64,6 +66,7 @@ class EcommerceUser(HttpUser):
             print(f"Falha ao listar pedidos: {e}")
 
     @task(1)
+    #Lista usuários
     def list_users(self):
         try:
             self.client.get(f"{self.users_url}/users")
@@ -71,6 +74,7 @@ class EcommerceUser(HttpUser):
             print(f"Falha ao listar usuários: {e}")
 
     @task(1)
+    #Lista produtos
     def list_products(self):
         try:
             self.client.get(f"{self.products_url}/products")
@@ -78,6 +82,7 @@ class EcommerceUser(HttpUser):
             print(f"Falha ao listar produtos: {e}")
 
     @task(1)
+    #Cria usuário
     def create_user(self):
         name = f"User{random.randint(1, 100000)}"
         email = f"user_{uuid.uuid4()}@test.com"
@@ -89,6 +94,7 @@ class EcommerceUser(HttpUser):
             print(f"Exception during create_user: {e}")
 
     @task(1)
+    #Cria produto
     def create_product(self):
         name = f"Product{random.randint(1, 100000)}"
         price = round(random.uniform(10.0, 100.0), 2)

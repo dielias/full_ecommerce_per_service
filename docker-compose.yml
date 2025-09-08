@@ -54,8 +54,8 @@ services:
     networks:
       - ecommerce-net
     ports:
-      - "25432:5432"
-      - "8476:8474"
+      - "25432:5432" # Porta para o tráfego do serviço de usuários
+      - "8476:8474"  # Porta para a API de administração
 
   # Banco de dados para os pedidos
   db-orders:
@@ -82,8 +82,8 @@ services:
     networks:
       - ecommerce-net
     ports:
-      - "35432:5432"
-      - "8477:8474"
+      - "35432:5432" # Porta para o tráfego do serviço de produtos
+      - "8477:8474"  # Porta para a API de administração
 
   # Inicialização dos bancos (criação de tabelas e seed)
   db-init:
@@ -113,7 +113,9 @@ services:
     ports:
       - "8001:8001"
     environment:
-      DATABASE_URL: "postgresql+psycopg2://ecommerce_users:my_password_users@toxiproxy-users:5432/ecommerce_users"
+      #DATABASE_URL: "postgresql+psycopg2://ecommerce_users:my_password_users@toxiproxy-users:5432/ecommerce_users"
+      # A URL deve apontar para a porta exposta do Toxiproxy
+      DATABASE_URL: "postgresql+psycopg2://ecommerce_users:my_password_users@toxiproxy-users:15432/ecommerce_users"
     networks:
       - ecommerce-net
 
@@ -130,7 +132,9 @@ services:
     ports:
       - "8002:8002"
     environment:
-      DATABASE_URL: "postgresql+psycopg2://ecommerce_products:my_password_products@toxiproxy-products:5432/ecommerce_products"
+      #DATABASE_URL: "postgresql+psycopg2://ecommerce_products:my_password_products@toxiproxy-products:5432/ecommerce_products"
+      # A URL deve apontar para a porta exposta do Toxiproxy
+      DATABASE_URL: "postgresql+psycopg2://ecommerce_products:my_password_products@toxiproxy-products:25432/ecommerce_products"
     networks:
       - ecommerce-net
 
@@ -147,7 +151,9 @@ services:
     ports:
       - "8003:8003"
     environment:
-      DATABASE_URL: "postgresql+psycopg2://ecommerce_orders:my_password_orders@toxiproxy-orders:5432/ecommerce_orders"
+      #DATABASE_URL: "postgresql+psycopg2://ecommerce_orders:my_password_orders@toxiproxy-orders:5432/ecommerce_orders"
+      # A URL deve apontar para a porta exposta do Toxiproxy
+      DATABASE_URL: "postgresql+psycopg2://ecommerce_orders:my_password_orders@toxiproxy-orders:35432/ecommerce_orders"
     networks:
       - ecommerce-net
       
